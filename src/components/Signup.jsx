@@ -1,13 +1,59 @@
-// src/components/Signup.jsx
-import React from 'react';
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import {setUser, fetchHighscore } from "../redux/slices/userSlice"
+import "./authStyle.css"
+import { useNavigate} from "react-router-dom";
 
-const Signup = () => {
-  return (
-    <div>
-      <h2>Signup Component</h2>
-      {/* Add your signup form or content here */}
-    </div>
-  );
-};
+function Signup() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-export default Signup;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const response = await fetch(`http://localhost:5000/users/signup`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        })
+
+        const json = await response.json();
+
+        if (response.ok) {
+            
+            localStorage.setItem('user', JSON.stringify(json));
+
+            dispatch(setUser(json))
+            dispatch(fetchHighscore())
+        }
+    }
+
+    return (
+        <div className='signup-container' >
+                        <div className="signup-content">
+                            <h1>Signup</h1>
+                            <form onSubmit={handleSubmit} >
+                                <div>
+                                    <label>Email : </label> <br />
+                                    <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} /> <br />
+                                </div>
+
+                                <div>
+                                    <label>Password : </label> <br />
+                                    <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} /> <br />
+                                </div>
+                                <button type="submit">Submit</button>
+                            </form>
+
+                            <button onClick={ () => navigate("/login") } >Already a user? Login</button>
+
+                        </div>
+        </div>
+    )
+}
+
+export default Signup

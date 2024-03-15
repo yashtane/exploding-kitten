@@ -1,13 +1,25 @@
-// src/components/Highscore.jsx
-import React from 'react';
+import React from 'react'
 
-const Highscore = () => {
+function Highscore({highscore}) {
+
+    function extractNameFromEmail(email) {
+      console.log(email)
+        const atIndex = email?.indexOf('@');
+        return email.substring(0, atIndex);
+    }
+
   return (
-    <div>
-      <h2>Highscore Component</h2>
-      {/* Display highscores or relevant content here */}
+    <div className='highscore-cont' >
+    <h1>Highscores (Top 10)</h1>
+    <div className='highscore' >
+      {
+        highscore && highscore.map( (user, ind) => (
+          <p key={ind}> {extractNameFromEmail(user.email)} -  {user.score}</p>
+        )  )
+      }
     </div>
-  );
-};
+</div>
+  )
+}
 
-export default Highscore;
+export default Highscore
